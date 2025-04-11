@@ -5,5 +5,7 @@
 ![image](https://github.com/user-attachments/assets/c10612e4-c32d-4141-9a52-49a657c04e8e)
 3. s
 4. s
-5. s
-6. s
+5. pagination
+![image](https://github.com/user-attachments/assets/a8e195f3-e07f-4c80-946c-eeb4c3b4c606)
+
+7. s
