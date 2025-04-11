@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import "../App.scss";
+import ReactPaginate from "react-paginate";
 import { fetchAllUser } from "../services/UserService";
 import { useNavigate } from "react-router-dom";
 import logoDashboard from "../assets/img/logo-dashboard.svg";
@@ -131,28 +133,6 @@ const IconSearch = () => (
   </svg>
 );
 
-// const IconBell = () => (
-//   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-//     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-//     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-//   </svg>
-// );
-
-// const IconHelp = () => (
-//   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-//     <circle cx="12" cy="12" r="10"></circle>
-//     <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
-//     <line x1="12" y1="17" x2="12.01" y2="17"></line>
-//   </svg>
-// );
-
-// const IconUser = () => (
-//   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-//     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-//     <circle cx="12" cy="7" r="4"></circle>
-//   </svg>
-// );
-
 const IconEdit = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -237,65 +217,9 @@ const IconUser2 = () => (
 );
 
 const Dashboard = (props) => {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0); // ReactPaginate uses 0-based indexing
+  const [itemsPerPage, setItemsPerPage] = useState(7); // Hiển thị 7 users trên mỗi trang
   const navigate = useNavigate();
-
-  const tableData = [
-    {
-      id: 1,
-      name: "Elizabeth Lee",
-      avatar: iconUser,
-      company: "AvatarSystems",
-      value: "$359",
-      date: "10/07/2023",
-      status: "New",
-    },
-    {
-      id: 2,
-      name: "Carlos Garcia",
-      avatar: iconUser,
-      company: "SmoothShift",
-      value: "$747",
-      date: "24/07/2023",
-      status: "New",
-    },
-    {
-      id: 3,
-      name: "Elizabeth Bailey",
-      avatar: iconUser,
-      company: "Prime Time Telecom",
-      value: "$664",
-      date: "08/08/2023",
-      status: "In-progress",
-    },
-    {
-      id: 4,
-      name: "Ryan Brown",
-      avatar: iconUser,
-      company: "OmniTech Corporation",
-      value: "$541",
-      date: "11/08/2023",
-      status: "In-progress",
-    },
-    {
-      id: 5,
-      name: "Ryan Young",
-      avatar: iconUser,
-      company: "DataStream Inc",
-      value: "$769",
-      date: "01/09/2023",
-      status: "Completed",
-    },
-    {
-      id: 6,
-      name: "Hailey Adams",
-      avatar: iconUser,
-      company: "FlowRush",
-      value: "$922",
-      date: "10/10/2023",
-      status: "Completed",
-    },
-  ];
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -323,16 +247,25 @@ const Dashboard = (props) => {
     }
   };
 
-  // const getUsers = async () => {
-  //   let res = await fetchAllUser();
-  //   console.log("res: ", res);
-  // };
-
   console.log(listUsers);
+
+  // Tính toán tổng số trang
+  const pageCount = Math.ceil(listUsers.length / itemsPerPage);
+
+  // Xử lý khi người dùng click vào nút phân trang
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
+  };
+
+  // Lấy danh sách users cho trang hiện tại
+  const getCurrentPageData = () => {
+    const startIndex = currentPage * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    return listUsers.slice(startIndex, endIndex);
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
-      {/* Sidebar */}
       <div className="w-64 bg-white border-r border-gray-200">
         <div className="p-4 flex items-center">
           <div className="cursor-pointer">
@@ -530,79 +463,34 @@ const Dashboard = (props) => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
-                    {/* <th className="w-12 px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      <input
-                        type="checkbox"
-                        className="rounded border-gray-300 text-pink-500 focus:ring-pink-500"
-                      />
-                    </th> */}
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Customer Name
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Company
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Order Value
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Order Date
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {/* {tableData.map((row) => (
-                    <tr key={row.id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <input
-                          type="checkbox"
-                          className="rounded border-gray-300 text-pink-500 focus:ring-pink-500"
-                        />
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="h-8 w-8 rounded-full overflow-hidden mr-3">
-                            <img src={row.avatar} alt={row.name} />
-                          </div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {row.name}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {row.company}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {row.value}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {row.date}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={getStatusClass(row.status)}>
-                          {row.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <IconEdit />
-                        </button>
-                      </td>
-                    </tr>
-                  ))} */}
 
+                <tbody className="bg-white divide-y divide-gray-200">
                   {listUsers &&
                     listUsers.length > 0 &&
-                    listUsers.map((item, index) => {
+                    getCurrentPageData().map((item, index) => {
                       return (
                         <tr key={`users-${index}`} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="h-8 w-8 rounded-full overflow-hidden mr-3">
                                 <img
@@ -616,21 +504,21 @@ const Dashboard = (props) => {
                             </div>
                           </td>
 
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                             {item.company}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                             {item.orderValue}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                             {item.oderDate}
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
+                          <td className="px-3 py-4 whitespace-nowrap">
                             <span className={getStatusClass(item.status)}>
                               {item.status}
                             </span>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                             <button className="text-gray-400 hover:text-gray-600">
                               <IconEdit />
                             </button>
@@ -642,6 +530,31 @@ const Dashboard = (props) => {
               </table>
 
               {/* Pagination */}
+              <div className="px-4  py-3 flex items-center justify-between border-t border-gray-200">
+                <div className="flex-1 flex justify-end">
+                  <ReactPaginate
+                    breakLabel="..."
+                    nextLabel="Next >"
+                    onPageChange={handlePageClick}
+                    pageRangeDisplayed={3}
+                    pageCount={pageCount}
+                    previousLabel="< Previous"
+                    containerClassName="flex items-center space-x-1 "
+                    pageLinkClassName="px-3 py-1 cursor-pointer rounded text-gray-600 hover:bg-gray-100"
+                    previousLinkClassName="px-3 py-1 rounded cursor-pointer text-gray-600 hover:bg-gray-100 "
+                    nextLinkClassName="px-3 py-1 rounded cursor-pointer text-gray-600 hover:bg-gray-100"
+                    activeLinkClassName="bg-pink-500 text-white hover:bg-pink-600"
+                    breakLinkClassName="px-3 py-1 rounded text-gray-600"
+                    forcePage={currentPage}
+                    disabledClassName="opacity-50 "
+                    disabledLinkClassName="text-gray-300  pointer-events-none"
+                    previousClassName={currentPage === 0 ? "disabled" : ""}
+                    nextClassName={
+                      currentPage === pageCount - 1 ? "disabled" : ""
+                    }
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </main>

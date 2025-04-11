@@ -1,7 +1,6 @@
-import axios from "axios";
-
+import axios from "./customize-axios";
 const fetchAllUser = () => {
-  return axios.get("https://67ec9394aa794fb3222e224b.mockapi.io/report");
+  return axios.get("/report");
 };
 
 export { fetchAllUser };
