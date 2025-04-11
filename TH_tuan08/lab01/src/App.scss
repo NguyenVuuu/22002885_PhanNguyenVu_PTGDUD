@@ -86,14 +86,3 @@
   background-color: #fff;
   border-color: #dee2e6;
 }
-
-/* CSS cho ReactPaginate */
-.disabled {
-  opacity: 0.5;
-  // cursor: not-allowed;
-}
-
-.disabled a {
-  pointer-events: none;
-  color: #6c757d !important;
-}

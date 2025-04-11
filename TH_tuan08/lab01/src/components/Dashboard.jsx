@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import "../App.scss";
+import { Link } from "react-router-dom";
 import ReactPaginate from "react-paginate";
 import { fetchAllUser } from "../services/UserService";
 import { useNavigate } from "react-router-dom";
@@ -11,7 +11,6 @@ import question from "../assets/img/Question.svg";
 import bell from "../assets/img/bell.svg";
 import SquaresFour from "../assets/img/phosphor-SquaresFour-Outlined.svg";
 
-// SVG Icons as components
 const IconHome = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -217,8 +216,9 @@ const IconUser2 = () => (
 );
 
 const Dashboard = (props) => {
-  const [currentPage, setCurrentPage] = useState(0); // ReactPaginate uses 0-based indexing
-  const [itemsPerPage, setItemsPerPage] = useState(7); // Hiển thị 7 users trên mỗi trang
+  const [currentPage, setCurrentPage] = useState(0);
+  const [itemsPerPage, setItemsPerPage] = useState(7);
+  const [activePage, setActivePage] = useState("dashboard");
   const navigate = useNavigate();
 
   const getStatusClass = (status) => {
@@ -249,19 +249,20 @@ const Dashboard = (props) => {
 
   console.log(listUsers);
 
-  // Tính toán tổng số trang
   const pageCount = Math.ceil(listUsers.length / itemsPerPage);
 
-  // Xử lý khi người dùng click vào nút phân trang
   const handlePageClick = (event) => {
     setCurrentPage(event.selected);
   };
 
-  // Lấy danh sách users cho trang hiện tại
   const getCurrentPageData = () => {
     const startIndex = currentPage * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     return listUsers.slice(startIndex, endIndex);
+  };
+
+  const handlePageChange = (page) => {
+    setActivePage(page);
   };
 
   return (
@@ -275,7 +276,14 @@ const Dashboard = (props) => {
 
         <nav className="mt-6">
           <div className="px-4 mb-4">
-            <button className="w-full bg-pink-500 text-white flex items-center px-4 py-3 rounded">
+            <button
+              className={`w-full ${
+                activePage === "dashboard"
+                  ? "bg-pink-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              } flex items-center px-4 py-3 rounded`}
+              onClick={() => handlePageChange("dashboard")}
+            >
               <span className="mr-2">
                 <IconHome />
               </span>
@@ -284,7 +292,14 @@ const Dashboard = (props) => {
           </div>
 
           <div className="px-4 mb-4">
-            <button className="w-full text-gray-600 flex items-center px-4 py-3 rounded hover:bg-gray-100">
+            <button
+              className={`w-full ${
+                activePage === "projects"
+                  ? "bg-pink-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              } flex items-center px-4 py-3 rounded`}
+              onClick={() => handlePageChange("projects")}
+            >
               <span className="mr-2">
                 <IconFolder />
               </span>
@@ -293,7 +308,14 @@ const Dashboard = (props) => {
           </div>
 
           <div className="px-4 mb-4">
-            <button className="w-full text-gray-600 flex items-center px-4 py-3 rounded hover:bg-gray-100">
+            <button
+              className={`w-full ${
+                activePage === "teams"
+                  ? "bg-pink-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              } flex items-center px-4 py-3 rounded`}
+              onClick={() => handlePageChange("teams")}
+            >
               <span className="mr-2">
                 <IconUsers />
               </span>
@@ -302,7 +324,14 @@ const Dashboard = (props) => {
           </div>
 
           <div className="px-4 mb-4">
-            <button className="w-full text-gray-600 flex items-center px-4 py-3 rounded hover:bg-gray-100">
+            <button
+              className={`w-full ${
+                activePage === "analytics"
+                  ? "bg-pink-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              } flex items-center px-4 py-3 rounded`}
+              onClick={() => handlePageChange("analytics")}
+            >
               <span className="mr-2">
                 <IconChart />
               </span>
@@ -311,7 +340,14 @@ const Dashboard = (props) => {
           </div>
 
           <div className="px-4 mb-4">
-            <button className="w-full text-gray-600 flex items-center px-4 py-3 rounded hover:bg-gray-100">
+            <button
+              className={`w-full ${
+                activePage === "messages"
+                  ? "bg-pink-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              } flex items-center px-4 py-3 rounded`}
+              onClick={() => handlePageChange("messages")}
+            >
               <span className="mr-2">
                 <IconMessage />
               </span>
@@ -320,7 +356,14 @@ const Dashboard = (props) => {
           </div>
 
           <div className="px-4 mb-4">
-            <button className="w-full text-gray-600 flex items-center px-4 py-3 rounded hover:bg-gray-100">
+            <button
+              className={`w-full ${
+                activePage === "integrations"
+                  ? "bg-pink-500 text-white"
+                  : "text-gray-600 hover:bg-gray-100"
+              } flex items-center px-4 py-3 rounded`}
+              onClick={() => handlePageChange("integrations")}
+            >
               <span className="mr-2">
                 <IconLayers />
               </span>
@@ -347,7 +390,9 @@ const Dashboard = (props) => {
       <div className="flex-1 overflow-auto">
         {/* Header */}
         <header className="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-pink-500">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-pink-500 capitalize">
+            {activePage}
+          </h1>
 
           <div className="flex items-center space-x-4">
             <div className="relative">
@@ -381,182 +426,207 @@ const Dashboard = (props) => {
 
         {/* Main Content */}
         <main className="p-6">
-          <div className="mb-6">
-            <h2 className="text-lg font-semibold mb-4 flex items-center">
-              <span className="bg-pink-100 text-pink-500 p-1 rounded mr-2">
-                <img className="overview" src={SquaresFour} alt="" />
-              </span>
-              Overview
-            </h2>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {/* Turnover Card */}
-              <div className="bg-pink-50 rounded-lg p-5">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-gray-600">Turnover</span>
-                  <button className="text-pink-500 p-1 rounded hover:bg-pink-100">
-                    <IconHome />
-                  </button>
-                </div>
-                <div className="text-3xl font-bold mb-2">$92,405</div>
-                <div className="flex items-center text-green-500 text-sm">
-                  <span>↑ 5.39%</span>
-                  <span className="text-gray-500 ml-1">period of change</span>
-                </div>
-              </div>
-
-              {/* Profit Card */}
-              <div className="bg-blue-50 rounded-lg p-5">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-gray-600">Profit</span>
-                  <button className="text-blue-500 p-1 rounded hover:bg-blue-100">
-                    <IconDollar />
-                  </button>
-                </div>
-                <div className="text-3xl font-bold mb-2">$32,218</div>
-                <div className="flex items-center text-green-500 text-sm">
-                  <span>↑ 5.36%</span>
-                  <span className="text-gray-500 ml-1">period of change</span>
-                </div>
-              </div>
-
-              {/* New Customer Card */}
-              <div className="bg-blue-50 rounded-lg p-5">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-gray-600">New customer</span>
-                  <button className="text-blue-500 p-1 rounded hover:bg-blue-100">
-                    <IconUser2 />
-                  </button>
-                </div>
-                <div className="text-3xl font-bold mb-2">298</div>
-                <div className="flex items-center text-green-500 text-sm">
-                  <span>↑ 6.84%</span>
-                  <span className="text-gray-500 ml-1">period of change</span>
-                </div>
-              </div>
+          {activePage !== "dashboard" ? (
+            <div className="flex items-center justify-center h-[calc(100vh-80px)]">
+              <h1 className="text-3xl font-bold text-pink-500 capitalize">
+                {activePage}
+              </h1>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="mb-6">
+                <h2 className="text-lg font-semibold mb-4 flex items-center">
+                  <span className="bg-pink-100 text-pink-500 p-1 rounded mr-2">
+                    <img className="overview" src={SquaresFour} alt="" />
+                  </span>
+                  Overview
+                </h2>
 
-          {/* Detailed Report Section */}
-          <div>
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold flex items-center">
-                <span className="bg-pink-100 text-pink-500 p-1 rounded mr-2">
-                  <IconFolder />
-                </span>
-                Detailed report
-              </h2>
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {/* Turnover Card */}
+                  <div className="bg-pink-50 rounded-lg p-5">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-gray-600">Turnover</span>
+                      <button className="text-pink-500 p-1 rounded hover:bg-pink-100">
+                        <IconHome />
+                      </button>
+                    </div>
+                    <div className="text-3xl font-bold mb-2">$92,405</div>
+                    <div className="flex items-center text-green-500 text-sm">
+                      <span>↑ 5.39%</span>
+                      <span className="text-gray-500 ml-1">
+                        period of change
+                      </span>
+                    </div>
+                  </div>
 
-              <div className="flex space-x-2">
-                <button className="border border-gray-200 rounded px-3 py-1 text-sm font-medium flex items-center">
-                  <span className="mr-1">Import</span>
-                </button>
-                <button className="border border-gray-200 rounded px-3 py-1 text-sm font-medium flex items-center">
-                  <span className="mr-1">Export</span>
-                </button>
-              </div>
-            </div>
+                  {/* Profit Card */}
+                  <div className="bg-blue-50 rounded-lg p-5">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-gray-600">Profit</span>
+                      <button className="text-blue-500 p-1 rounded hover:bg-blue-100">
+                        <IconDollar />
+                      </button>
+                    </div>
+                    <div className="text-3xl font-bold mb-2">$32,218</div>
+                    <div className="flex items-center text-green-500 text-sm">
+                      <span>↑ 5.36%</span>
+                      <span className="text-gray-500 ml-1">
+                        period of change
+                      </span>
+                    </div>
+                  </div>
 
-            {/* Data Table */}
-            <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Customer Name
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Company
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Order Value
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Order Date
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Status
-                    </th>
-                    <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {listUsers &&
-                    listUsers.length > 0 &&
-                    getCurrentPageData().map((item, index) => {
-                      return (
-                        <tr key={`users-${index}`} className="hover:bg-gray-50">
-                          <td className="px-3 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="h-8 w-8 rounded-full overflow-hidden mr-3">
-                                <img
-                                  src={item.avatar}
-                                  alt={item.customerName}
-                                />
-                              </div>
-                              <div className="text-sm font-medium text-gray-900">
-                                {item.customerName}
-                              </div>
-                            </div>
-                          </td>
-
-                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {item.company}
-                          </td>
-                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {item.orderValue}
-                          </td>
-                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {item.oderDate}
-                          </td>
-                          <td className="px-3 py-4 whitespace-nowrap">
-                            <span className={getStatusClass(item.status)}>
-                              {item.status}
-                            </span>
-                          </td>
-                          <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
-                            <button className="text-gray-400 hover:text-gray-600">
-                              <IconEdit />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                </tbody>
-              </table>
-
-              {/* Pagination */}
-              <div className="px-4  py-3 flex items-center justify-between border-t border-gray-200">
-                <div className="flex-1 flex justify-end">
-                  <ReactPaginate
-                    breakLabel="..."
-                    nextLabel="Next >"
-                    onPageChange={handlePageClick}
-                    pageRangeDisplayed={3}
-                    pageCount={pageCount}
-                    previousLabel="< Previous"
-                    containerClassName="flex items-center space-x-1 "
-                    pageLinkClassName="px-3 py-1 cursor-pointer rounded text-gray-600 hover:bg-gray-100"
-                    previousLinkClassName="px-3 py-1 rounded cursor-pointer text-gray-600 hover:bg-gray-100 "
-                    nextLinkClassName="px-3 py-1 rounded cursor-pointer text-gray-600 hover:bg-gray-100"
-                    activeLinkClassName="bg-pink-500 text-white hover:bg-pink-600"
-                    breakLinkClassName="px-3 py-1 rounded text-gray-600"
-                    forcePage={currentPage}
-                    disabledClassName="opacity-50 "
-                    disabledLinkClassName="text-gray-300  pointer-events-none"
-                    previousClassName={currentPage === 0 ? "disabled" : ""}
-                    nextClassName={
-                      currentPage === pageCount - 1 ? "disabled" : ""
-                    }
-                  />
+                  {/* New Customer Card */}
+                  <div className="bg-blue-50 rounded-lg p-5">
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-gray-600">New customer</span>
+                      <button className="text-blue-500 p-1 rounded hover:bg-blue-100">
+                        <IconUser2 />
+                      </button>
+                    </div>
+                    <div className="text-3xl font-bold mb-2">298</div>
+                    <div className="flex items-center text-green-500 text-sm">
+                      <span>↑ 6.84%</span>
+                      <span className="text-gray-500 ml-1">
+                        period of change
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
+
+              {/* Detailed Report Section */}
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-lg font-semibold flex items-center">
+                    <span className="bg-pink-100 text-pink-500 p-1 rounded mr-2">
+                      <IconFolder />
+                    </span>
+                    Detailed report
+                  </h2>
+
+                  <div className="flex space-x-2">
+                    <button className="border border-gray-200 rounded px-3 py-1 text-sm font-medium flex items-center">
+                      <span className="mr-1">Import</span>
+                    </button>
+                    <button className="border border-gray-200 rounded px-3 py-1 text-sm font-medium flex items-center">
+                      <span className="mr-1">Export</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Data Table */}
+                <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+                  <table className="min-w-full divide-y divide-gray-200">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Customer Name
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Company
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Order Value
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Order Date
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Status
+                        </th>
+                        <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+
+                    <tbody className="bg-white divide-y divide-gray-200">
+                      {listUsers &&
+                        listUsers.length > 0 &&
+                        getCurrentPageData().map((item, index) => {
+                          return (
+                            <tr
+                              key={`users-${index}`}
+                              className="hover:bg-gray-50"
+                            >
+                              <td className="px-3 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <div className="h-8 w-8 rounded-full overflow-hidden mr-3">
+                                    <img
+                                      src={item.avatar}
+                                      alt={item.customerName}
+                                    />
+                                  </div>
+                                  <div className="text-sm font-medium text-gray-900">
+                                    {item.customerName}
+                                  </div>
+                                </div>
+                              </td>
+
+                              <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {item.company}
+                              </td>
+                              <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {item.orderValue}
+                              </td>
+                              <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                {item.oderDate}
+                              </td>
+                              <td className="px-3 py-4 whitespace-nowrap">
+                                <span className={getStatusClass(item.status)}>
+                                  {item.status}
+                                </span>
+                              </td>
+                              <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <button className="text-gray-400 hover:text-gray-600">
+                                  <IconEdit />
+                                </button>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                    </tbody>
+                  </table>
+
+                  {/* Pagination */}
+                  <div className="px-4 py-3 flex items-center justify-between border-t border-gray-200">
+                    <div className="text-sm text-gray-700">
+                      <span>Tổng số: </span>
+                      <span className="font-medium">{listUsers.length}</span>
+                      <span> người dùng</span>
+                    </div>
+                    <div className="flex justify-end">
+                      <ReactPaginate
+                        breakLabel="..."
+                        nextLabel={<IconChevronRight />}
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={3}
+                        pageCount={pageCount}
+                        previousLabel={<IconChevronLeft />}
+                        renderOnZeroPageCount={null}
+                        containerClassName="flex items-center space-x-1"
+                        pageLinkClassName="px-3 py-1 cursor-pointer rounded text-gray-600 hover:bg-gray-100"
+                        previousLinkClassName="px-3 py-1 rounded cursor-pointer text-gray-600 hover:bg-gray-100"
+                        nextLinkClassName="px-3 py-1 rounded cursor-pointer text-gray-600 hover:bg-gray-100"
+                        activeLinkClassName="bg-pink-500 text-white hover:bg-pink-600"
+                        breakLinkClassName="px-3 py-1 rounded text-gray-600"
+                        forcePage={currentPage}
+                        disabledClassName="opacity-50"
+                        disabledLinkClassName="text-gray-300 pointer-events-none"
+                        previousClassName={currentPage === 0 ? "disabled" : ""}
+                        nextClassName={
+                          currentPage === pageCount - 1 ? "disabled" : ""
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
         </main>
       </div>
     </div>
