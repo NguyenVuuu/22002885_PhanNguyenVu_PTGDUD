@@ -70,7 +70,7 @@ const ModalAddNew = (props) => {
     <>
       {/* Backdrop overlay */}
       <div
-        className="fixed inset-0backdrop-blur-sm z-[9998] animate-fadeIn"
+        className="fixed inset-0 backdrop-blur-sm z-[9998] animate-fadeIn"
         onClick={handleClose}
       />
       {/* Modal container for perfect centering */}
